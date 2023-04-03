@@ -1,0 +1,19 @@
+import textrazor
+
+# Set up TextRazor API client
+client = textrazor.TextRazor('YOUR_API_KEY')
+
+# Set up TextRazor options
+client.set_extractors(['entities'])
+
+# Read transcribed text from file
+with open('transcript.txt', 'r') as f:
+    transcript = f.read()
+
+# Analyze text with TextRazor API
+response = client.analyze(transcript)
+
+# Get tags from TextRazor response
+tags = [entity.label for entity in response.entities()]
+
+print('Tags: ', tags)
