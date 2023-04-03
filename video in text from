@@ -1,0 +1,40 @@
+import speech_recognition as sr
+import moviepy.editor as mp
+import pysrt
+import time
+
+# Set audio configuration
+r = sr.Recognizer()
+language = 'hi-IN'
+
+# Load video file using moviepy
+clip = mp.VideoFileClip('videoplayback (1).mp4')
+
+# Extract audio from video file
+clip.audio.write_audiofile('audio.wav')
+
+# Read audio file into memory
+with sr.AudioFile('audio.wav') as audio_file:
+    audio_content = r.record(audio_file)
+
+# Perform speech-to-text transcription
+MAX_RETRIES = 3
+transcript = ''
+attempts = 0
+while not transcript and attempts < MAX_RETRIES:
+    try:
+        transcript = r.recognize_google(audio_content, language=language)
+    except sr.RequestError as e:
+        attempts += 1
+        print(f"Attempt {attempts}/{MAX_RETRIES}: {str(e)}. Retrying in 5 seconds...")
+        time.sleep(5)
+
+if not transcript:
+    print("Failed to recognize speech.")
+else:
+    # Convert transcribed text to SRT format
+    srt_generator = pysrt.SubRipFile()
+    srt_generator.append(pysrt.SubRipItem(index=1, text=transcript, start=0, end=len(transcript)))
+    srt_generator.save('transcript.srt')
+
+    print('Transcribed Text: ', transcript)
