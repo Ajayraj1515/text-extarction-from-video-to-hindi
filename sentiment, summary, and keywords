@@ -1,0 +1,19 @@
+from textblob import TextBlob
+
+# Read transcribed text from file
+with open('transcript.txt', 'r') as f:
+    transcript = f.read()
+
+# Get sentiment of text
+blob = TextBlob(transcript)
+sentiment = blob.sentiment.polarity
+
+# Get summary of text
+summary = blob.summary
+
+# Get keywords of text
+keywords = blob.noun_phrases
+
+print('Sentiment: ', sentiment)
+print('Summary: ', summary)
+print('Keywords: ', keywords)
